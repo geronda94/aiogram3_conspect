@@ -3,10 +3,9 @@ from aiogram.types import Message #импортируем объект Message
 from aiogram.filters import Command #Имортируем объект через который устанавливаем команды
 import asyncio #Импортируем asyncio чтобы иметь возможность запускать бота асинхронно
 import logging #импортируем библиотеку логирования
+from core.settings import TOKEN, ADMIN
+from core.handlers.basic import get_start, start_bot, stop_bot
 
-
-TOKEN = '5783446935:AAFyAOVxRAic6Wx5bSVfoDX6hjs7EC3yjrE'
-ADMIN = 413281115
 
 #созздаем асинхронную функцию с запуском бота
 async def start():

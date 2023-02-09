@@ -1,6 +1,6 @@
 from aiogram import Bot
 from aiogram.types import Message
-from main import ADMIN
+from core.settings import ADMIN
 
 #Создаем асинхронную функцию для работы внутри бота
 async def get_start(message: Message, bot: Bot):
