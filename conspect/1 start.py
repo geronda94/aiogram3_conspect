@@ -3,7 +3,6 @@ from aiogram.types import Message #импортируем объект Message
 from aiogram.filters import Command #Имортируем объект через который устанавливаем команды
 import asyncio #Импортируем asyncio чтобы иметь возможность запускать бота асинхронно
 import logging #импортируем библиотеку логирования
-from core.handlers.basic import get_start, start_bot, stop_bot #Импортируем из хэндлера основыне функции
 from core.settings import TOKEN, ADMIN #Импортируем токен и ид админ из переменных окружения
 
 
