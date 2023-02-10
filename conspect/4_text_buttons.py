@@ -30,8 +30,9 @@ reply_keyboard = ReplyKeyboardMarkup(
             KeyboardButton(text='ряд 3, кнопка 2')
         ]
     ], resize_keyboard=True, #Делает кнопки меньше
-       one_time_keyboard=True #Скрывает клавиатуру после нажатия
-)
+       one_time_keyboard=True, #Скрывает клавиатуру после нажатия
+       input_field_placeholder='Выбери кнопку' #Подсказка в виде надписи в поле ввода
+    )
 ################################################
 
 #Блок стартовых функций#########################
