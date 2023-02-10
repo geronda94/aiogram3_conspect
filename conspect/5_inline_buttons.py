@@ -1,5 +1,5 @@
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, ContentType
+from aiogram.types import Message, ContentType, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.filters import Filter, Command, Text
 import asyncio
 from environs import Env
@@ -12,6 +12,13 @@ TOKEN = env.str('TOKEN')                       #
 ADMIN = env.int('ADMIN_ID')                    #
 ################################################
 
+################################################
+#
+
+
+
+################################################
+
 #Блок стартовых функций#########################
 async def start_bot(bot: Bot): #функция срабатывает когда запускается сервер с ботом
     await bot.send_message(ADMIN, text='Бота запущен!')
@@ -19,7 +26,6 @@ async def stop_bot(bot: Bot):
     await bot.send_message(ADMIN, text='<s>Bot is stoped</s>')
 async def get_start(message: Message, bot: Bot): #Функция срабатывает когда юзер дает команду /start
     await message.answer('Давай начнем!')
-###############################################
 
 
 #Тело бота#####################################
@@ -28,6 +34,7 @@ async def start():
 
     bot = Bot(token=TOKEN, parse_mode="HTML")
     dp = Dispatcher()
+
     dp.startup.register(start_bot) #Регистрируем хэндлер срабатывающий при запуске
     dp.shutdown.register(stop_bot)
 
