@@ -1,8 +1,9 @@
 from aiogram import Bot,F, Dispatcher
 from aiogram.filters import Command, Filter, Text
+from aiogram.types import Message
 from aiogram.types import BotCommand, BotCommandScopeDefault #Узнать про скопы
 import asyncio
-from core.settings import TOKEN
+from core.settings import TOKEN, ADMIN
 
 async def set_commands(bot: Bot):
     commands = [
@@ -14,15 +15,23 @@ async def set_commands(bot: Bot):
     await bot.set_my_commands(commands, BotCommandScopeDefault()) #Скоп по умолчанию|ПОказывает команды всем
 
 
+async def start_bot(bot: Bot):
+    await set_commands(bot)
+    await bot.send_message(ADMIN, text='Бота запущен!')
+
+async def get_start(message: Message, bot: Bot):
+    await message.answer('Давай начнем!')
 
 
 async def start():
+
+
     bot = Bot(token=TOKEN, parse_mode="HTML")
     dp = Dispatcher()
+    dp.startup.register(start_bot)
 
 
-
-
+    dp.message.register(get_start, Command(commands=['start']))
 
 
 
