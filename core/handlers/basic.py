@@ -18,6 +18,10 @@ async def start_bot(bot: Bot):
 async def stop_bot(bot: Bot):
     await bot.send_message(ADMIN, text='<s>Bot is stoped</s>')
 
-
+#Cоздаем функцию которая сохраняет все фото отправленные пользователем
+async def get_photo(message: Message, bot: Bot):
+    await message.answer('Получил картинку')
+    file = await bot.get_file(message.photo[-1].file_id)
+    await bot.download_file(file.file_path, rf'photo_upload/{message.photo[-1].file_id}.jpg')
 
 
