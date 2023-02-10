@@ -1,4 +1,6 @@
-#Разобраться с самописными фильтрами
+"""Разобраться с самописными фильтрами"""
+
+
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, ContentType
 from aiogram.filters import Filter, Command, Text
@@ -22,7 +24,7 @@ async def hello(message: Message, bot: Bot):
     await bot.send_message(message.chat.id, text='Привет')
 
 
-
+#Создаем функцию которая принимает телефон пользователя и проверяет его на подлинность
 async def get_contact(message: Message, bot: Bot):
     flag = 'Свой' if message.contact.user_id == message.from_user.id else 'Чужой'
 
@@ -46,6 +48,8 @@ async def start():
     #Регистрируем хэндлер на текстовое апдейт со словом привет
     dp.message.register(hello, Text(text=['привет','здарова'], ignore_case=True))
     #dp.message.register(hello, F.text=='Привет')
+
+    #Регистрируем хэндлер на прием контактов пользователя
     dp.message.register(get_contact, F.content_type == ContentType.CONTACT)
 
 
