@@ -1,3 +1,4 @@
+#BOT API Telegram InlineKeyboardButton узнать по подробнее все функции
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, ContentType, InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.filters import Filter, Command, Text
@@ -13,8 +14,19 @@ ADMIN = env.int('ADMIN_ID')                    #
 ################################################
 
 ################################################
-#
+#Формируем инлайн клавиатуру
+async def get_inline(message: Message, bot: Bot):
+    shop_card = InlineKeyboardMarkup(inline_keyboard=[
+        [
+            InlineKeyboardButton(text='Заказать', callback_data='заказать товар'),
+            InlineKeyboardButton(text='Купить оптом', callback_data='заказать оптом')
+        ], [
+            InlineKeyboardButton(text='Узнать погоду', url='https://gismeteo.md'),
+            InlineKeyboardButton(text='Связаться с продавцом', url='tg://user?id=413281115')
+        ]
+    ])
 
+    await message.answer('Карточка товара',reply_markup=shop_card)
 
 
 ################################################
@@ -41,7 +53,7 @@ async def start():
 
 
     dp.message.register(get_start, Command(commands=['start'])) #Регистрируем хэндлер на команду /start
-
+    dp.message.register(get_inline, Command(commands=['inline']))
 
 
 
