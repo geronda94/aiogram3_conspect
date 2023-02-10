@@ -30,7 +30,7 @@ async def start():
     dp = Dispatcher()
     dp.startup.register(start_bot)
 
-
+    #устанавливаем набор команд которые появляются рядом с чатом
     dp.message.register(get_start, Command(commands=['start']))
 
 
