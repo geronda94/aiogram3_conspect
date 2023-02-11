@@ -14,9 +14,9 @@ ADMIN = env.int('ADMIN_ID')                    #
 
 #Блок стартовых функций#########################
 async def start_bot(bot: Bot): #функция срабатывает когда запускается сервер с ботом
-    await bot.send_message(ADMIN, text='Бота запущен!')
+    await bot.send_message(ADMIN, text='Бот запущен!')
 async def stop_bot(bot: Bot):
-    await bot.send_message(ADMIN, text='<s>Bot is stoped</s>')
+    await bot.send_message(ADMIN, text='<s>Бот остановлен</s>')
 async def get_start(message: Message, bot: Bot): #Функция срабатывает когда юзер дает команду /start
     await message.answer('Давай начнем!')
 ###############################################
