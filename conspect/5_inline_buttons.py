@@ -7,6 +7,7 @@ from aiogram.filters import Filter, Command, Text
 import asyncio
 from environs import Env
 import logging #импортируем библиотеку логирования
+from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 
 #Блок инициализации#############################
 env = Env()                                    #
@@ -17,6 +18,7 @@ ADMIN = env.int('ADMIN_ID')                    #
 
 ################################################
 #Формируем карточки с инлайн клавиатурой
+#from aiogram.types import Message, ContentType, InlineKeyboardButton, InlineKeyboardMarkup, InputFile, CallbackQuery
 catalog = ['cofe', 'tea','watter','jam','bread']
 
 async def get_inline(message: Message, bot: Bot):
@@ -53,6 +55,19 @@ async def callback_buy(call: CallbackQuery, bot: Bot):
     await call.message.answer(f'Вы заказали в розницу {catalog[index]}')
     await bot.send_message(ADMIN, f'Пользователь {call.from_user.id} хочет купить {catalog[index]}')
     await call.answer()  # Отвечаем телеграму что мы обработали колбэк
+
+################################################
+#Формируем инлайн кнопки вторым способом
+#from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
+def get_inline_keyboard():
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.button(text='Купить товар', callback_data='buy_tov')
+    keyboard_builder.button(text='Заказать оптом', callback_data='order_tov')
+    keyboard_builder.button(text='Узнать погоду', url='https://gismeteo.md')
+    keyboard_builder.button(text='Связаться с продавцом', url=f'tg://user?id={ADMIN}')
+
+    keyboard_builder.adjust(2,2)
+    return keyboard_builder.as_markup()
 
 ################################################
 #Блок стартовых функций#########################
