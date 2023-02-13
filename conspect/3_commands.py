@@ -19,7 +19,7 @@ async def set_commands(bot: Bot):
 
 async def start_bot(bot: Bot):
     await set_commands(bot)
-    await bot.send_message(ADMIN, text='Бота запущен!')
+    await bot.send_message(ADMIN, text='Бот запущен!')
 
 async def get_start(message: Message, bot: Bot):
     await message.answer('Давай начнем!')
