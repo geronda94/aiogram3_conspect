@@ -8,7 +8,6 @@ from environs import Env
 import logging  # импортируем библиотеку логирования
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
-from aiogram.methods.edit_message_reply_markup import EditMessageReplyMarkup
 
 # Блок инициализации#############################
 env = Env()  #
