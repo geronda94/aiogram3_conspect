@@ -18,6 +18,8 @@ env.read_env('.env')  #
 TOKEN = env.str('TOKEN')  #
 ADMIN = env.int('ADMIN_ID')  #
 ################################################
+if not os.path.exists('photo_upload'):
+    os.mkdir('photo_upload')
 
 # каталог
 catalog_dict = {
@@ -33,7 +35,7 @@ orders = dict()
 async def get_photo(message: Message, bot: Bot):
     await message.answer('Получил картинку')
     file = await bot.get_file(message.photo[-1].file_id)
-    await bot.download_file(file.file_path, f'../photo_upload/{message.photo[-1].file_id}.jpg')
+    await bot.download_file(file.file_path, f'photo_upload/{message.photo[-1].file_id}.jpg')
 
 
 ################################################
@@ -110,7 +112,7 @@ def get_inline_keyboard(name, title, index_mes=0, order=1):
     keyboard_builder = InlineKeyboardBuilder()
 
     keyboard_builder.button(text='Связаться с продавцом', url=f'tg://user?id={ADMIN}')
-    
+
 
     keyboard_builder.button(text=f'➖ 1', callback_data=MinusToOrder(index=index_mes, title=title, order=order-1))
     keyboard_builder.button(text=f'В заказ {order}', callback_data=SendOrder(index=index_mes, title=title, order=order))
