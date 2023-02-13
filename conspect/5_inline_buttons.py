@@ -8,6 +8,7 @@ from environs import Env
 import logging  # импортируем библиотеку логирования
 from aiogram.utils.keyboard import InlineKeyboardBuilder, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
+from aiogram.methods.edit_message_reply_markup import EditMessageReplyMarkup
 
 # Блок инициализации#############################
 env = Env()  #
@@ -86,27 +87,33 @@ class CardDataOrder(CallbackData, prefix='order'):
 class CardDataBuy(CallbackData, prefix='buy'):
     title: str
 
+class UpdateIndexMes(CallbackData, prefix='update'):
+    index: int
+    title: str
+
+def get_inline_keyboard(name, title, index_mes=0):
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.button(text=f'Купить {name}', callback_data=CardDataBuy(title=title))
+    keyboard_builder.button(text=f'Заказать оптом {name}', callback_data=CardDataOrder(title=title))
+    keyboard_builder.button(text=f'Номер собщения {index_mes}', callback_data=UpdateIndexMes(index=index_mes, title=title))
+    keyboard_builder.button(text='Узнать погоду', url='https://gismeteo.md')
+    keyboard_builder.button(text='Связаться с продавцом', url=f'tg://user?id={ADMIN}')
+
+    keyboard_builder.adjust(2, 1, 2)
+    return keyboard_builder.as_markup()
+
+
 
 async def get_simple_inline(message: Message, bot: Bot):
-    def get_inline_keyboard(name, title):
-        keyboard_builder = InlineKeyboardBuilder()
-        keyboard_builder.button(text=f'Купить {name}', callback_data=CardDataBuy(title=title))
-        keyboard_builder.button(text=f'Заказать оптом {name}', callback_data=CardDataOrder(title=title))
-        keyboard_builder.button(text='Узнать погоду', url='https://gismeteo.md')
-        keyboard_builder.button(text='Связаться с продавцом', url=f'tg://user?id={ADMIN}')
 
-        keyboard_builder.adjust(2, 2)
-        return keyboard_builder.as_markup()
 
     for key, value in catalog_dict.items():
-        await message.answer_photo(
-            value[1],
-            caption=f'✅    Товар {value[0]}\n\n'
+        await message.answer_photo(value[1])
+        await message.answer(text=f'✅    Товар {value[0]}\n\n'
                     f'Какое то описание в 250 символов '
                     f'которое кратко описывает основные характеристикаи и свойства'
-                    f'данного товара.',
-            reply_markup=get_inline_keyboard(value[0], key))
-        time.sleep(0.1)
+                    f' товара {value[0]}.',
+                    reply_markup=get_inline_keyboard(value[0], key, index_mes=0))
 
 
 # Обработка колбэков через классы
@@ -114,17 +121,38 @@ async def callback_order(call: CallbackQuery, bot: Bot, callback_data: CardDataO
     index = callback_data.title
 
     await call.message.answer(f'Вы добавили в оптовый заказ {catalog_dict.get(index)[0]}')
+
+
+    message_num = call.message.message_id
     await bot.send_message(ADMIN,
-                           f'Пользователь {call.from_user.id} добавили в оптовый заказ {catalog_dict.get(index)[0]}')
+                           f'Пользователь {call.from_user.id} добавили в оптовый заказ {catalog_dict.get(index)[0]}'
+                           f'\nСообщение номер {message_num}')
     await call.answer()  # Отвечаем телеграму что мы обработали колбэк
 
 
 async def callback_buy(call: CallbackQuery, bot: Bot, callback_data: CardDataBuy):
     index = callback_data.title
+    message_num = call.message.message_id
 
     await call.message.answer(f'Вы заказали в розницу {catalog_dict.get(index)[0]}')
-    await bot.send_message(ADMIN, f'Пользователь {call.from_user.id} хочет купить {catalog_dict.get(index)[0]}')
+    await bot.send_message(ADMIN, f'Пользователь {call.from_user.id} хочет купить {catalog_dict.get(index)[0]}'
+                           f'\nСообщение номер {message_num}')
     await call.answer()  # Отвечаем телеграму что мы обработали колбэк
+
+async def update_message_index(call: CallbackQuery, bot:Bot, callback_data: UpdateIndexMes):
+    message_num = call.message.message_id
+    chat = call.message.chat.id
+    k = str(callback_data.title)
+    v = catalog_dict.get(k)
+
+    await bot.edit_message_text(chat_id=chat, message_id=message_num,
+                                text=f'✅    Товар {v[0]}\n\n'\
+                                    f'Какое то описание в 250 символов '\
+                                    f'которое кратко описывает основные характеристикаи и свойства'\
+                                    f' товара {v[0]}.',
+                                reply_markup=get_inline_keyboard(v[0], k, index_mes=message_num))
+
+    await call.answer()
 
 
 ################################################
@@ -165,6 +193,7 @@ async def start():
 
     dp.callback_query.register(callback_order, CardDataOrder.filter())  # Регистрируем колбэки через классы
     dp.callback_query.register(callback_buy, CardDataBuy.filter())
+    dp.callback_query.register(update_message_index, UpdateIndexMes.filter())
 
     dp.message.register(get_photo, F.photo)
 
