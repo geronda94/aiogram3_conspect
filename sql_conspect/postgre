@@ -1,0 +1,90 @@
+#создание таблиц
+CREATE TABLE users(
+	id serial PRIMARY KEY,
+	first name varchar(30) NOT NULL,
+	last name varchar(30) NOT NULL
+);
+
+CREATE TABLE passports(
+	id serial PRIMARY KEY,
+	passport_number int NOT NULL,
+	city_of_register varchar(30) NOT NULL,
+	fk_passports_users int REFERENCES users(id)
+);
+
+#добавление данных в таблицу
+INSERT INTO users (first_name, last_name) VALUES ('Camala', 'Haris');
+INSERT INTO users (first_name, last_name) VALUES ('Homer', 'Simpron');
+INSERT INTO users (first_name, last_name) VALUES ('Maria', 'Domedon');
+
+INSERT INTO passports(passport_number, city_of_register, fk_passports_users) VALUES (11111, 'Chishinau', 1);
+INSERT INTO passports(passport_number, city_of_register, fk_passports_users) VALUES (22222, 'Calarash', 2);
+INSERT INTO passports(passport_number, city_of_register, fk_passports_users) VALUES (33333, 'Tiraspol', 3);
+
+#Пример выборки из таблицы
+SELECT * FROM users;
+SELECT id, first_name FROM users;
+
+SELECT * FROM passports;
+SELECT passport_number FROM passports;
+
+SELECT users.first_name, passports.passport_number FROM users, passports WHERE users.id=passports.fk_passports_users;
+
+#######################################################################
+CREATE TABLE categories
+(
+	id serial PRIMARY KEY,
+	post_categories varchar(50) NOT NULL
+);
+
+CREATE TABLE posts
+(
+	id serial PRIMARY KEY,
+	post_titles varchar(150) NOT NULL,
+	post_text varchar NOT NULL,
+	fk_posts_categories int REFERENCES categories(id)
+
+);
+
+INSERT INTO categories(post_categories) VALUES('life');
+INSERT INTO categories(post_categories) VALUES('politic');
+INSERT INTO categories(post_categories) VALUES('bussines');
+INSERT INTO categories(post_categories) VALUES('hobby');
+
+SELECT * FROM categories;
+
+INSERT INTO posts(post_titles, post_text, fk_posts_categories) VALUES ('post 1', 'LOREM ipsum lorem ipsum lorem ipsu, lore',2);
+INSERT INTO posts(post_titles, post_text, fk_posts_categories) VALUES ('post 2', 'LOREM ipsum lorem ipsum lorem ipsu, lore',1);
+INSERT INTO posts(post_titles, post_text, fk_posts_categories) VALUES ('post 3', 'LOREM ipsum lorem ipsum lorem ipsu, lore',4);
+INSERT INTO posts(post_titles, post_text, fk_posts_categories) VALUES ('post 4', 'LOREM ipsum lorem ipsum lorem ipsu, lore',3);
+INSERT INTO posts(post_titles, post_text, fk_posts_categories) VALUES ('post 5', 'LOREM ipsum lorem ipsum lorem ipsu, lore',1);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

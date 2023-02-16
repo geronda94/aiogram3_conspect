@@ -58,11 +58,12 @@ class OfficeHoursMiddlerware(BaseMiddleware):
 
 
 #Работа с БД
-#Создаем класс на запись данных в бд
+#Создаем класс для манипуляций с данными в бд
 class Request:
     def __init__(self, connector: asyncpg.pool.Pool):
-        self.connector =connector
+        self.connector = connector
 
+    #функци записывает данные в бд
     async def add_data(self, user_id, user_name):
         query = f"INSERT INTO data_users (user_id, user_name)"\
                 f"VALUES ({user_id}, '{user_name}') ON CONFLICT (user_id) DO UPDATE SET user_name='{user_name}'"
@@ -98,7 +99,7 @@ async def get_start(message: Message, bot: Bot, counter: str, request: Request):
 #Создаем функцию на соединение с базой#########
 async def create_pool():
     return await asyncpg.create_pool(user='postgres', password='19941994', database='users',
-                                             host='127.0.0.1', port=5433, command_timeout=60)
+                                             host='127.0.0.1', port=5432, command_timeout=60)
 ###############################################
 #Тело бота#####################################
 async def start():

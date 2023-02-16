@@ -11,7 +11,6 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.types import BotCommand, BotCommandScopeDefault
 import os
 
-
 # Блок инициализации#############################
 env = Env()  #
 env.read_env('.env')  #
@@ -93,55 +92,56 @@ class CardDataOrder(CallbackData, prefix='order'):
 class CardDataBuy(CallbackData, prefix='buy'):
     title: str
 
+
 class SendOrder(CallbackData, prefix='update'):
     index: int
     title: str
     order: int
+
 
 class AddToOrder(CallbackData, prefix='add'):
     index: int
     title: str
     order: int
 
+
 class MinusToOrder(CallbackData, prefix='minus'):
     index: int
     title: str
     order: int
+
 
 def get_inline_keyboard(name, title, index_mes=0, order=1):
     keyboard_builder = InlineKeyboardBuilder()
 
     keyboard_builder.button(text='Связаться с продавцом', url=f'tg://user?id={ADMIN}')
 
-
-    keyboard_builder.button(text=f'➖ 1', callback_data=MinusToOrder(index=index_mes, title=title, order=order-1))
+    keyboard_builder.button(text=f'➖ 1', callback_data=MinusToOrder(index=index_mes, title=title, order=order - 1))
     keyboard_builder.button(text=f'В заказ {order}', callback_data=SendOrder(index=index_mes, title=title, order=order))
-    keyboard_builder.button(text=f'➕ 1', callback_data=AddToOrder(index=index_mes, title=title, order=order+1))
+    keyboard_builder.button(text=f'➕ 1', callback_data=AddToOrder(index=index_mes, title=title, order=order + 1))
 
     keyboard_builder.button(text=f'➖ 10', callback_data=MinusToOrder(index=index_mes, title=title, order=order - 10))
     keyboard_builder.button(text=f'➖ 5', callback_data=MinusToOrder(index=index_mes, title=title, order=order - 5))
     keyboard_builder.button(text=f'➕ 10', callback_data=AddToOrder(index=index_mes, title=title, order=order + 10))
     keyboard_builder.button(text=f'➕ 5', callback_data=AddToOrder(index=index_mes, title=title, order=order + 5))
 
-
     # keyboard_builder.button(text=f'Купить {name}', callback_data=CardDataBuy(title=title))
     # keyboard_builder.button(text=f'Заказать оптом {name}', callback_data=CardDataOrder(title=title))
-    #keyboard_builder.button(text='Узнать погоду', url='https://gismeteo.md')
+    # keyboard_builder.button(text='Узнать погоду', url='https://gismeteo.md')
     #
 
     keyboard_builder.adjust(1, 3, 4)
     return keyboard_builder.as_markup()
 
 
-
 async def get_simple_inline(message: Message, bot: Bot):
     for key, value in catalog_dict.items():
         await message.answer_photo(value[1])
         await message.answer(text=f'✅    Товар {value[0]}\n\n'
-                    f'Какое то описание в 250 символов '
-                    f'которое кратко описывает основные характеристикаи и свойства'
-                    f' товара {value[0]}.',
-                    reply_markup=get_inline_keyboard(value[0], key, index_mes=0, order=1))
+                                  f'Какое то описание в 250 символов '
+                                  f'которое кратко описывает основные характеристикаи и свойства'
+                                  f' товара {value[0]}.',
+                             reply_markup=get_inline_keyboard(value[0], key, index_mes=0, order=1))
 
 
 # Обработка колбэков через классы
@@ -149,7 +149,6 @@ async def callback_order(call: CallbackQuery, bot: Bot, callback_data: CardDataO
     index = callback_data.title
 
     await call.message.answer(f'Вы добавили в оптовый заказ {catalog_dict.get(index)[0]}')
-
 
     message_num = call.message.message_id
     await bot.send_message(ADMIN,
@@ -164,10 +163,11 @@ async def callback_buy(call: CallbackQuery, bot: Bot, callback_data: CardDataBuy
 
     await call.message.answer(f'Вы заказали в розницу {catalog_dict.get(index)[0]}')
     await bot.send_message(ADMIN, f'Пользователь {call.from_user.id} хочет купить {catalog_dict.get(index)[0]}'
-                           f'\nСообщение номер {message_num}')
+                                  f'\nСообщение номер {message_num}')
     await call.answer()  # Отвечаем телеграму что мы обработали колбэк
 
-async def send_order(call: CallbackQuery, bot:Bot, callback_data: SendOrder):
+
+async def send_order(call: CallbackQuery, bot: Bot, callback_data: SendOrder):
     message_num = call.message.message_id
     chat = call.message.chat.id
     k = str(callback_data.title)
@@ -177,7 +177,7 @@ async def send_order(call: CallbackQuery, bot:Bot, callback_data: SendOrder):
     user = call.from_user.id
 
     orders[user] = dict()
-    orders[user][k] = {'Значение':v[0], 'В корзине':piece}
+    orders[user][k] = {'Значение': v[0], 'В корзине': piece}
 
     print(orders[user][k])
 
@@ -188,14 +188,14 @@ async def send_order(call: CallbackQuery, bot:Bot, callback_data: SendOrder):
                                      f' товара {v[0]}.',
                                 reply_markup=get_inline_keyboard(v[0], k, index_mes=message_num, order=1))
 
-    await call.message.answer( f'Вы добавили {v[0]}, {piece} штук в заказ')
+    await call.message.answer(f'Вы добавили {v[0]}, {piece} штук в заказ')
     await bot.send_message(ADMIN, f'Пользователь {call.message.from_user.id} добавил {v[0]} \n '
                                   f'{piece} штук в заказ')
 
     await call.answer()
 
 
-async def add_to_order(call: CallbackQuery, bot:Bot, callback_data: AddToOrder):
+async def add_to_order(call: CallbackQuery, bot: Bot, callback_data: AddToOrder):
     message_num = call.message.message_id
     chat = call.message.chat.id
     k = str(callback_data.title)
@@ -204,16 +204,16 @@ async def add_to_order(call: CallbackQuery, bot:Bot, callback_data: AddToOrder):
     plus_peace = callback_data.order
 
     await bot.edit_message_text(chat_id=chat, message_id=message_num,
-                                text=f'✅    Товар {v[0]}\n\n'\
-                                    f'Какое то описание в 250 символов '\
-                                    f'которое кратко описывает основные характеристикаи и свойства'\
-                                    f' товара {v[0]}.',
+                                text=f'✅    Товар {v[0]}\n\n' \
+                                     f'Какое то описание в 250 символов ' \
+                                     f'которое кратко описывает основные характеристикаи и свойства' \
+                                     f' товара {v[0]}.',
                                 reply_markup=get_inline_keyboard(v[0], k, index_mes=message_num, order=plus_peace))
 
     await call.answer()
 
 
-async def minus_to_order(call: CallbackQuery, bot:Bot, callback_data: MinusToOrder):
+async def minus_to_order(call: CallbackQuery, bot: Bot, callback_data: MinusToOrder):
     message_num = call.message.message_id
     chat = call.message.chat.id
     k = str(callback_data.title)
@@ -223,13 +223,14 @@ async def minus_to_order(call: CallbackQuery, bot:Bot, callback_data: MinusToOrd
         minus_peace = callback_data.order
 
         await bot.edit_message_text(chat_id=chat, message_id=message_num,
-                                    text=f'✅    Товар {v[0]}\n\n'\
-                                        f'Какое то описание в 250 символов '\
-                                        f'которое кратко описывает основные характеристикаи и свойства'\
-                                        f' товара {v[0]}.',
+                                    text=f'✅    Товар {v[0]}\n\n' \
+                                         f'Какое то описание в 250 символов ' \
+                                         f'которое кратко описывает основные характеристикаи и свойства' \
+                                         f' товара {v[0]}.',
                                     reply_markup=get_inline_keyboard(v[0], k, index_mes=message_num, order=minus_peace))
 
     await call.answer()
+
 
 ################################################
 
@@ -242,12 +243,14 @@ async def set_commands(bot: Bot):
         BotCommand(command='cancel', description='Сбросить'),
     ]
 
-    await bot.set_my_commands(commands, BotCommandScopeDefault()) #Скоп по умолчанию|ПОказывает команды всем
+    await bot.set_my_commands(commands, BotCommandScopeDefault())  # Скоп по умолчанию|ПОказывает команды всем
+
 
 
 async def start_bot(bot: Bot):
     await set_commands(bot)
     await bot.send_message(ADMIN, text='Бот запущен!')
+
 
 async def stop_bot(bot: Bot):
     await bot.send_message(ADMIN, text='<s>Bot is stoped</s>')
@@ -256,7 +259,8 @@ async def stop_bot(bot: Bot):
 async def get_start(message: Message, bot: Bot):  # Функция срабатывает когда юзер дает команду /start
     await message.answer('Давай начнем!')
 
-
+async def get_url(message: Message, bot: Bot):
+    await message.answer('Ты отправил ссылку')
 ###############################################
 
 # Тело бота#####################################
@@ -280,6 +284,8 @@ async def start():
     dp.callback_query.register(add_to_order, AddToOrder.filter())
     dp.callback_query.register(minus_to_order, MinusToOrder.filter())
 
+
+    dp.message.register(get_url, Text(startswith=r'https://'))
     dp.message.register(get_photo, F.photo)
 
     try:

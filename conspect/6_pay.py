@@ -1,5 +1,7 @@
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, ContentType, LabeledPrice, PreCheckoutQuery
+from aiogram.types import Message, ContentType, LabeledPrice, PreCheckoutQuery, InlineKeyboardButton, InlineKeyboardMarkup, \
+    ShippingOption, ShippingQuery
+
 from aiogram.filters import Filter, Command, Text
 import asyncio
 from environs import Env
@@ -12,6 +14,70 @@ TOKEN = env.str('TOKEN')                       #
 ADMIN = env.int('ADMIN_ID')                    #
 ################################################
 
+keyboards = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Оплатить заказ', pay=True)],
+    [InlineKeyboardButton(text='Связаться с продавцом', url='tg://user?id=413281115')]
+])
+
+BY_SHIPPING = ShippingOption(
+    id = 'by',
+    title='delivery to Belarus',
+    prices = [
+        LabeledPrice(label='Доставка Белпочтой', amount=500)
+    ]
+)
+
+RU_SHIPPING = ShippingOption(
+    id = 'ru',
+    title='delivery to Russia',
+    prices = [
+        LabeledPrice(label='Доставка Почтой России', amount=500)
+    ]
+)
+
+UA_SHIPPING = ShippingOption(
+    id = 'ua',
+    title='delivery to Ukraine',
+    prices = [
+        LabeledPrice(label='Доставка Укрпочтой', amount=500)
+    ]
+)
+
+
+CITIES_SHIPPING= ShippingOption(
+    id= 'capitals',
+    title='Быстрая доставка по городу',
+    prices = [
+        LabeledPrice(label='Доставка курьером', amount=2000 )
+    ]
+)
+
+
+
+async def shipping_check(shipping_query: ShippingQuery, bot: Bot):
+    shipping_options = []
+    countries = ['BY', 'RU', 'UA']
+    if shipping_query.shipping_address.country_code not in countries:
+        return await bot.answer_shipping_query(shipping_query.id, ok=False,
+                                               error_message='Невозможна доставка в вашу страну')
+
+    if shipping_query.shipping_address.country_code == 'BY':
+        shipping_options.append(BY_SHIPPING)
+    if shipping_query.shipping_address.country_code == 'RU':
+        shipping_options.append(RU_SHIPPING)
+    if shipping_query.shipping_address.country_code == 'UA':
+        shipping_options.append(UA_SHIPPING)
+
+    cities = ['Минск', 'Москва', 'Киев']
+    if shipping_query.shipping_address.city in cities:
+        shipping_options.append(CITIES_SHIPPING)
+
+    await bot.answer_shipping_query(shipping_query.id, ok=True, shipping_options=shipping_options)
+
+
+
+
+#Пишем хэндлер на форомление оплаты
 async def order(message: Message, bot: Bot):
     await bot.send_invoice(
         chat_id=message.chat.id,
@@ -34,19 +100,19 @@ async def order(message: Message, bot: Bot):
         photo_size=150,
         photo_width=150,
         photo_height=200,
-        need_name=True, #Если нужно имя пользователя
-        need_phone_number=True, #Если нужен телефон пользователя
-        need_email=True,
+        need_name=False, #Если нужно имя пользователя
+        need_phone_number=False, #Если нужен телефон пользователя
+        need_email=False,
         need_shipping_address=False,
         send_phone_number_to_provider=False,
         send_email_to_provider=False,
-        is_flexible=False, #Если конечная цена зависит от способа доставки
+        is_flexible=True, #Если конечная цена зависит от способа доставки
         disable_notification=True, #СОобщение доставляется без звука
         protect_content=False, #Если нужно защитить пост от пересылки и копирования ТРуе
         reply_to_message_id= False, #указываем ид сообщения если хотим прикрепть его к счету
         allow_sending_without_reply= True, #Разрешается отправить счет на оплату даже если цитируемое сообщение не найдено
-        reply_markup=None, #МОжно добавить клавиатуру
-        #request_timeout=15
+        reply_markup=keyboards, #МОжно добавить клавиатуру
+        request_timeout=15
     )
 
 
@@ -57,17 +123,6 @@ async def succesful_payment(message: Message):
     msg = f'Спасибо за оплату {message.successful_payment.total_amount // 100} {message.successful_payment.currency}' \
           f'\r\nнаш менеджер получил заявку и уже звонит вам'
     await message.answer(msg)
-
-
-
-
-
-
-
-
-
-
-
 
 #Блок стартовых функций#########################
 async def start_bot(bot: Bot): #функция срабатывает когда запускается сервер с ботом
@@ -88,11 +143,11 @@ async def start():
     dp.startup.register(start_bot) #Регистрируем хэндлер срабатывающий при запуске
     dp.shutdown.register(stop_bot)
 
-    dp.message.register(order, Command(commands='pay'))
+
 
     dp.message.register(get_start, Command(commands=['start'])) #Регистрируем хэндлер на команду /start
-
-
+    dp.message.register(order, Command(commands='pay'))
+    dp.shipping_query.register(shipping_check)
 
 
 

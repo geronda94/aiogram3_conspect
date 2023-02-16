@@ -224,7 +224,7 @@ async def in_bag_piece(call: CallbackQuery, bot: Bot, callback_data: InBag):
             keyboard_builder.adjust(3)
             return keyboard_builder.as_markup()
 
-        await call.message.answer(text='🛒                               КОРЗИНА: ',
+        await call.message.answer(text='🛒            КОРЗИНА: ',
                                   reply_markup=bag_inline_keyboard())
 
     await call.answer()
