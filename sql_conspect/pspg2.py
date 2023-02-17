@@ -22,26 +22,24 @@ try:
     #         """)
     #     print(f'Таблица users создана!')
 
-    with connection.cursor() as cursor:
-        cursor.execute(
-            """
-            INSERT INTO users (name, nick_name) VALUES ('igor', 'harry94');
-            """
-        )
-        print('Данные добавлены')
+    # with connection.cursor() as cursor:
+    #     cursor.execute(
+    #         """
+    #         INSERT INTO users (name, nick_name) VALUES ('igor', 'harry94');
+    #         """
+    #     )
+    #     print('Данные добавлены')
+
+    # with connection.cursor() as cursor:
+    #         cursor.execute(
+    #             """
+    #             SELECT * FROM users;
+    #             """
+    #         )
+    #         data = cursor.fetchall()
 
     with connection.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT * FROM users;
-                """
-            )
-            for i in cursor.fetchall():
-                print(i)
-
-
-
-
+        cursor.execute('DROP TABLE users;')
 
 except Exception as ex:
     print(ex)
