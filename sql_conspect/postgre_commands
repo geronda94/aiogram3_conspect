@@ -59,31 +59,46 @@ INSERT INTO posts(post_titles, post_text, fk_posts_categories) VALUES ('post 3',
 INSERT INTO posts(post_titles, post_text, fk_posts_categories) VALUES ('post 4', 'LOREM ipsum lorem ipsum lorem ipsu, lore',3);
 INSERT INTO posts(post_titles, post_text, fk_posts_categories) VALUES ('post 5', 'LOREM ipsum lorem ipsum lorem ipsu, lore',1);
 
+SELECT posts.*, categories.post_categories FROM posts INNER JOIN categories ON categories.id=posts.fk_posts_categories;
 
 
 
+#############################################################################
+CREATE TABLE posts (
+	id serial PRIMARY KEY,
+	post_title varchar(150) NOT NULL,
+	post_text varchar NOT NULL
+);
+
+CREATE TABLE tags (
+	id serial PRIMARY KEY,
+	tag_name varchar(50) NOT NULL
+);
+
+CREATE TABLE posts_tags(
+	post_id int REFERENCES posts(id),
+	tag_id int REFERENCES tags(id),
+	CONSTRAINT posts_tags_pk PRIMARY KEY(post_id, tag_id)
+);
+
+INSERT INTO posts(post_title, post_text) VALUES ('post1', 'text post1');
+INSERT INTO posts(post_title, post_text) VALUES ('post2', 'text post2');
+INSERT INTO posts(post_title, post_text) VALUES ('post3', 'text post3');
+INSERT INTO posts(post_title, post_text) VALUES ('post4', 'text post4');
+INSERT INTO posts(post_title, post_text) VALUES ('post5', 'text post5');
+
+INSERT INTO tags(tag_name) VALUES('Python');
+INSERT INTO tags(tag_name) VALUES('C++');
+INSERT INTO tags(tag_name) VALUES('Django');
+INSERT INTO tags(tag_name) VALUES('Linux');
+INSERT INTO tags(tag_name) VALUES('SQL');
+
+INSERT INTO posts_tags VALUES(1,1),(2,2),(2,3),(3,5),(3,3),(3,4);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT posts.id, posts.post_title, tags.tag_name
+FROM posts LEFT JOIN posts_tags ON posts_tags.post_id=posts.id
+LEFT JOIN tags ON posts_tags.tag_id=tags.id;
 
 
 

@@ -98,7 +98,7 @@ async def get_start(message: Message, bot: Bot, counter: str, request: Request):
 ###############################################
 #Создаем функцию на соединение с базой#########
 async def create_pool():
-    return await asyncpg.create_pool(user='postgres', password='19941994', database='users',
+    return await asyncpg.create_pool(user='geronda', password='19941994', database='users',
                                              host='127.0.0.1', port=5432, command_timeout=60)
 ###############################################
 #Тело бота#####################################
