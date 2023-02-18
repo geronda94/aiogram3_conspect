@@ -27,10 +27,18 @@ async def print_db():
 class Database:
     def __init__(self, user, password, host, port, db_name):
         self.pool = None
+        self.user = user
+        self.password = password
+        self.host = host
+        self.port = port
+        self.db_name = db_name
         self.dsn = f'postgresql://{user}:{password}@{host}:{port}/{db_name}'
 
     async def connect(self):
-        self.pool = await asyncpg.create_pool(self.dsn)
+        self.pool = await asyncpg.create_pool(user=self.user, password=self.password, host=self.host,
+                                              port=self.port, database=self.db_name)
+        #self.pool = await asyncpg.create_pool(self.dsn)
+
 
     async def disconnect(self):
         await self.pool.close()
@@ -47,8 +55,10 @@ class Database:
 async def main():
     db = Database(user, password, host, port, db_name)
     await db.connect()
-    #result = await db.fetch("SELECT * FROM users2")
-    await db.execute("INSERT INTO users2 (name, dob) VALUES ('Valera', '1991-5-10');")
+    # result = await db.fetch("SELECT * FROM users2")
+    # for i in result:
+    #     print(*i)
+    await db.execute(f"INSERT INTO users2 (name, dob) VALUES ('Albert','1999-05-06');" )
     await db.disconnect()
 
 
