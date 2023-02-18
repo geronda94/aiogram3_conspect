@@ -14,36 +14,29 @@ try:
     # with connection.cursor() as cursor:
     #     cursor.execute(
     #         """
-    #         CREATE TABLE users(
+    #         CREATE TABLE users1(
     #         id serial PRIMARY KEY,
     #         name varchar(15) NOT NULL,
     #         nick_name varchar(25) NOT NULL
     #         );
     #         """)
-    #     print(f'Таблица users создана!')
-
-    # with connection.cursor() as cursor:
-    #     cursor.execute(
-    #         """
-    #         INSERT INTO users (name, nick_name) VALUES ('igor', 'harry94');
-    #         """
-    #     )
-    #     print('Данные добавлены')
-
-    # with connection.cursor() as cursor:
-    #         cursor.execute(
-    #             """
-    #             SELECT * FROM users;
-    #             """
-    #         )
-    #         data = cursor.fetchall()
+    #     print(f'Таблица users1 создана!')
 
     with connection.cursor() as cursor:
-        cursor.execute('DROP TABLE users;')
+        cursor.execute("INSERT INTO users1 (name, nick_name) VALUES ('igor', 'harry94');")
+        print('Данные добавлены')
+
+    with connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM users1;")
+            for i in cursor.fetchall():
+                print(i)
+
+    # with connection.cursor() as cursor:
+    #     cursor.execute('DROP TABLE users;')
 
 except Exception as ex:
     print(ex)
-finally:
-    if connection:
-        connection.close()
+# finally:
+#     if connection:
+#         connection.close()
 
