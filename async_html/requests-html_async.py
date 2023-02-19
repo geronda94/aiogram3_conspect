@@ -1,10 +1,15 @@
 import asyncio
 from requests_html import AsyncHTMLSession
 import aiofiles
+import os
+
+if not os.path.exists('/async_html/exp/'):
+    os.mkdir('/async_html/exp/')
+
 
 async def save_page(html_content, index):
     filename = f"page_{index}.html"
-    async with aiofiles.open(f'/home/dodo/Рабочий стол/repositories/aiogram3_conspect/experiments/exp/{filename}', "w", encoding="utf-8") as file:
+    async with aiofiles.open(f'/async_html/exp/{filename}', "w", encoding="utf-8") as file:
         await file.write(html_content)
 
 async def parse_page(url, index):
