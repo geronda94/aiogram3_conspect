@@ -3,6 +3,7 @@ from requests_html import AsyncHTMLSession
 import aiofiles
 import os
 
+
 if not os.path.exists('/async_html/exp/'):
     os.mkdir('/async_html/exp/')
 
@@ -31,5 +32,7 @@ async def parse_pages(urls):
         tasks.append(task)
     await asyncio.gather(*tasks)
 
-urls = ['https://darwin.md/telefoane?page='+str(x) for x in range(1,10)]
-asyncio.run(parse_pages(urls))
+
+if __name__ == "__main__":
+    urls = ['https://darwin.md/telefoane?page='+str(x) for x in range(1,10)]
+    asyncio.run(parse_pages(urls))
