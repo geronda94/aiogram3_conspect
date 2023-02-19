@@ -31,7 +31,7 @@ class CounterMiddleware(BaseMiddleware):
 
 
 def office_hours() -> bool:
-    return datetime.now().weekday() in (0,1,2,3,4) and datetime.now().hour in ([i for i in (range(8,19))])
+    return datetime.now().weekday() not in (0,1,2,3,4) and datetime.now().hour in ([i for i in (range(8,19))])
 
 # class OfficeHoursMiddlerware(BaseMiddleware):
 #     async def __call__(self,
