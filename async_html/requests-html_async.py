@@ -3,14 +3,15 @@ from requests_html import AsyncHTMLSession
 import aiofiles
 import os
 
+path_to_save = '/home/dodo/Рабочий стол/repositories/aiogram3_conspect/async_html/exp'
 
-if not os.path.exists('/async_html/exp/'):
-    os.mkdir('/async_html/exp/')
+if not os.path.exists(path_to_save ):
+    os.mkdir(path_to_save )
 
 
 async def save_page(html_content, index):
     filename = f"page_{index}.html"
-    async with aiofiles.open(f'/async_html/exp/{filename}', "w", encoding="utf-8") as file:
+    async with aiofiles.open(f'{path_to_save}/{filename}', "w", encoding="utf-8") as file:
         await file.write(html_content)
 
 async def parse_page(url, index):
@@ -33,6 +34,6 @@ async def parse_pages(urls):
     await asyncio.gather(*tasks)
 
 
-if __name__ == "__main__":
-    urls = ['https://darwin.md/telefoane?page='+str(x) for x in range(1,10)]
-    asyncio.run(parse_pages(urls))
+
+urls = ['https://darwin.md/telefoane?page='+str(x) for x in range(1,10)]
+asyncio.run(parse_pages(urls))
