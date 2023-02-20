@@ -10,7 +10,7 @@ async def set_commands(bot: Bot):
         BotCommand(command='start', description='Начало'),
         BotCommand(command='help', description='Описание Бота'),
         BotCommand(command='inline', description='Карточка товара функция'),
-        BotCommand(command='inline1', description='Карточка товара список'),
+        BotCommand(command='form', description='Вызвать анкету'),
         BotCommand(command='cancel', description='Сбросить'),
     ]
 
