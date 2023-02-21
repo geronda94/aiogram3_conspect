@@ -1,3 +1,4 @@
+from datetime import datetime,  timedelta
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, ContentType
 from aiogram.filters import Filter, Command, Text
@@ -34,7 +35,7 @@ async def get_lastname(message: Message, state: FSMContext):
     await state.update_data(last_name=message.text) #Заносим данные в машину состояний
     await state.set_state(StepsForm.GET_OLD)        #Переходим к следующему шагу
 
-async def get_old(message: Message, state: FSMContext):
+async def get_old(message: Message, bot: Bot, state: FSMContext):
     await state.update_data(age=message.text)
     context_data = await state.get_data() # Заносим данные из машины состояний в переменную
     await message.answer(f'Вот ваши данные:\n'\
