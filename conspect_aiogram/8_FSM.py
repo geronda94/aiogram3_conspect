@@ -13,7 +13,7 @@ env.read_env('.env')                           #
 TOKEN = env.str('TOKEN')                       #
 ADMIN = env.int('ADMIN_ID')                    #
 ################################################
-
+#Формируем класс в котором будут храниться состояния
 class StepsForm(StatesGroup):
     GET_NAME = State()
     GET_LASTNAME = State()
@@ -26,20 +26,25 @@ async def get_form(message: Message, state: FSMContext):
 
 async def get_name(message: Message, state: FSMContext):
     await message.answer(f'Твоё имя: \r\n {message.text}\r\n\nТеперь введите фамилию')
-    await state.update_data(name=message.text)
-    await state.set_state(StepsForm.GET_LASTNAME)
+    await state.update_data(name=message.text)     #Заносим данные в машину состояний
+    await state.set_state(StepsForm.GET_LASTNAME)  #Переходим к следующему шагу
 
 async def get_lastname(message: Message, state: FSMContext):
     await message.answer(f'Твоя фамилия: \r\n {message.text}\r\n\nТеперь введите возраст')
-    await state.update_data(last_name=message.text)
-    await state.set_state(StepsForm.GET_OLD)
+    await state.update_data(last_name=message.text) #Заносим данные в машину состояний
+    await state.set_state(StepsForm.GET_OLD)        #Переходим к следующему шагу
 
 async def get_old(message: Message, state: FSMContext):
-    await message.answer(f'Вам {message.text}')
     await state.update_data(age=message.text)
+    context_data = await state.get_data() # Заносим данные из машины состояний в переменную
+    await message.answer(f'Вот ваши данные:\n'\
+                         f'Возраст: {context_data["age"]}\n'\
+                         f'Имя: {context_data["name"]}\n'\
+                         f'Имя: {context_data["last_name"]}\n')
+    await state.clear() # Очищаем машину состояний
 
 
-
+###########################################################################
 
 
 
@@ -61,10 +66,10 @@ async def start():
     dp.shutdown.register(stop_bot)
 
     #Блок формы FSM
-    dp.message.register(get_form, Command(commands=['form']))
-    dp.message.register(get_name, StepsForm.GET_NAME)
-    dp.message.register(get_lastname, StepsForm.GET_LASTNAME)
-    dp.message.register(get_old, StepsForm.GET_OLD)
+    dp.message.register(get_form, Command(commands=['form'])) #Запускаем машину состояний в виде опросника
+    dp.message.register(get_name, StepsForm.GET_NAME)         #После введении имени переходим в функцию которая
+    dp.message.register(get_lastname, StepsForm.GET_LASTNAME) #Исполняет дальнейший код и сохраняет данные
+    dp.message.register(get_old, StepsForm.GET_OLD)           #В машину состояний
 
 
 
