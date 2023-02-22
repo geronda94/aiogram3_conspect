@@ -26,9 +26,11 @@ async def send_mediagroup(message: Message, bot: Bot):
     photo2 = InputMediaPhoto(type='photo', media=FSInputFile(path='media_files/photo_2.PNG'), caption='MEDIAGROUP_photo2')
     video = InputMediaVideo(type='video', media=FSInputFile(path='media_files/video.mp4'), caption='MEDIAGROUP_video')
     media = [photo1, photo2, video]
-    await bot.send_media_group(message.from_user.id, media)
+    await message.answer_media_group( media)
 
-
+async def send_photo(message: Message, bot: Bot):
+    photo = FSInputFile(path='media_files/photo_1.jpg')
+    await message.answer_photo(photo)
 
 
 
@@ -82,11 +84,12 @@ async def start():
     dp.shutdown.register(stop_bot)
 
 
-
+    #Регистрация хэндлеров на отправку медиафайлов
     dp.message.register(get_start, Command(commands=['start'])) #Регистрируем хэндлер на команду /start
     dp.message.register(send_audio, Command(commands=['send_audio'])) #Регистрируем хэндлер на команду /start
     dp.message.register(send_document, Command(commands=['send_document'])) #Регистрируем хэндлер на команду /start
     dp.message.register(send_mediagroup, Command(commands=['send_mediagroup'])) #Регистрируем хэндлер на команду /start
+    dp.message.register(send_photo, Command(commands=['send_photo'])) #Регистрируем хэндлер на команду /start
 
 
 
