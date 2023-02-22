@@ -30,8 +30,9 @@ async def send_mediagroup(message: Message, bot: Bot):
 
 async def send_photo(message: Message, bot: Bot):
     photo = FSInputFile(path='media_files/photo_1.jpg')
-    await message.answer_photo(photo)
+    await message.answer_photo(photo, caption='It`s Photo')
 
+async def send_video(message: Message, bot:Bot):
 
 
 
