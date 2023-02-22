@@ -1,4 +1,4 @@
-from aiogram import Bot, Dispatcher, F
+from aiogram import Bot, Dispatcher, F, BaseMiddleware
 from aiogram.types import Message, ContentType, BotCommand, BotCommandScopeDefault
 from aiogram.types import FSInputFile, InputMediaPhoto, InputMediaVideo
 from aiogram.filters import Filter, Command, Text
@@ -6,6 +6,8 @@ import asyncio
 from environs import Env
 import logging #импортируем библиотеку логирования
 from aiogram.utils.chat_action import ChatActionSender, ChatActionMiddleware
+from typing import Any, Callable, Dict, Awaitable
+from aiogram.dispatcher.flags import get_flag
 
 
 #Блок инициализации#############################
