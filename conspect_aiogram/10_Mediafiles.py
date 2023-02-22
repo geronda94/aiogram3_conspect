@@ -1,5 +1,6 @@
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, ContentType, BotCommand, BotCommandScopeDefault, FSInputFile
+from aiogram.types import Message, ContentType, BotCommand, BotCommandScopeDefault
+from aiogram.types import FSInputFile, InputMediaPhoto, InputMediaVideo
 from aiogram.filters import Filter, Command, Text
 import asyncio
 from environs import Env
@@ -13,10 +14,19 @@ ADMIN = env.int('ADMIN_ID')                    #
 ################################################
 #Блок с хэндлерами на отправку медиафайлов
 async def send_audio(message: Message, bot: Bot):
-    audio = FSInputFile(path=f'media_files/audio.m4a')
+    audio = FSInputFile(path=f'media_files/audio.m4a', filename='Какой-то звук')
+    await message.answer_audio(audio=audio)
 
+async def send_document(message: Message, bot: Bot):
+    document = FSInputFile(path=f'media_files/document.pdf')
+    await message.answer_document(document=document, caption='It`s document')
 
-
+async def send_mediagroup(message: Message, bot: Bot):
+    photo1 = InputMediaPhoto(type='photo', media=FSInputFile(path='media_files/photo_1.jpg'), caption='MEDIAGROUP_photo1')
+    photo2 = InputMediaPhoto(type='photo', media=FSInputFile(path='media_files/photo_2.PNG'), caption='MEDIAGROUP_photo2')
+    video = InputMediaVideo(type='video', media=FSInputFile(path='media_files/video.mp4'), caption='MEDIAGROUP_video')
+    media = [photo1, photo2, video]
+    await bot.send_media_group(message.from_user.id, media)
 
 
 
@@ -74,6 +84,9 @@ async def start():
 
 
     dp.message.register(get_start, Command(commands=['start'])) #Регистрируем хэндлер на команду /start
+    dp.message.register(send_audio, Command(commands=['send_audio'])) #Регистрируем хэндлер на команду /start
+    dp.message.register(send_document, Command(commands=['send_document'])) #Регистрируем хэндлер на команду /start
+    dp.message.register(send_mediagroup, Command(commands=['send_mediagroup'])) #Регистрируем хэндлер на команду /start
 
 
 
