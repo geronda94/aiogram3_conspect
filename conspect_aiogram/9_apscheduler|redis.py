@@ -129,7 +129,6 @@ async def start():
     dp.update.middleware.register(SchedulerMiddleware(scheduler))
 
 
-
     dp.startup.register(start_bot) #Регистрируем хэндлер срабатывающий при запуске
     dp.shutdown.register(stop_bot)
 

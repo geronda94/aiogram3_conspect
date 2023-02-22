@@ -5,6 +5,8 @@ from aiogram.filters import Filter, Command, Text
 import asyncio
 from environs import Env
 import logging #импортируем библиотеку логирования
+from aiogram.utils.chat_action import ChatActionSender
+
 
 #Блок инициализации#############################
 env = Env()                                    #
@@ -32,7 +34,20 @@ async def send_photo(message: Message, bot: Bot):
     photo = FSInputFile(path='media_files/photo_1.jpg')
     await message.answer_photo(photo)
 
+async def send_video(message: Message, bot: Bot):
+    async with ChatActionSender.upload_video(chat_id=message.chat.id):
+        video = FSInputFile(r'media_files/video.mp4')
+        await message.answer_video(video)
 
+async def send_videonote(message: Message, bot: Bot):
+    async with ChatActionSender.upload_video_note(chat_id=message.chat.id):
+        video_note = FSInputFile(r'media_files/video.mp4')
+        await message.answer_video_note(video_note)
+
+async def send_voice(message: Message, bot: Bot):
+    async with ChatActionSender.record_voice(chat_id=message.chat.id):
+        voice = FSInputFile(r'media_files/audio.m4a')
+        await message.answer_voice(voice=voice)
 
 
 
@@ -48,7 +63,7 @@ async def set_commands(bot: Bot):
         BotCommand(command='end_block', description='----------------'),
 
         #Блок команд на отправку медиа файлов
-            BotCommand(command='send_photo', description='Отправить фото'),
+        BotCommand(command='send_photo', description='Отправить фото'),
         BotCommand(command='send_video', description='Отправить видео'),
         BotCommand(command='send_audio', description='Отправить аудио'),
         BotCommand(command='send_document', description='Отправить документ'),
@@ -60,6 +75,7 @@ async def set_commands(bot: Bot):
     ]
 
     await bot.set_my_commands(commands, BotCommandScopeDefault()) #Скоп по умолчанию|ПОказывает команды всем
+
 
 async def start_bot(bot: Bot): #функция срабатывает когда запускается сервер с ботом
     await bot.send_message(ADMIN, text='Бот запущен!')
@@ -86,10 +102,13 @@ async def start():
 
     #Регистрация хэндлеров на отправку медиафайлов
     dp.message.register(get_start, Command(commands=['start'])) #Регистрируем хэндлер на команду /start
-    dp.message.register(send_audio, Command(commands=['send_audio'])) #Регистрируем хэндлер на команду /start
-    dp.message.register(send_document, Command(commands=['send_document'])) #Регистрируем хэндлер на команду /start
-    dp.message.register(send_mediagroup, Command(commands=['send_mediagroup'])) #Регистрируем хэндлер на команду /start
-    dp.message.register(send_photo, Command(commands=['send_photo'])) #Регистрируем хэндлер на команду /start
+    dp.message.register(send_audio, Command(commands=['send_audio']))
+    dp.message.register(send_document, Command(commands=['send_document']))
+    dp.message.register(send_mediagroup, Command(commands=['send_mediagroup']))
+    dp.message.register(send_photo, Command(commands=['send_photo']))
+    dp.message.register(send_video, Command(commands=['send_video']))
+    dp.message.register(send_videonote, Command(commands=['send_videonote']))
+    dp.message.register(send_voice, Command(commands=['send_voice']))
 
 
 
