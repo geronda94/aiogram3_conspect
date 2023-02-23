@@ -57,12 +57,29 @@ class Database:
 async def main():
     db = Database(user, password, host, port, db_name)
     await db.connect()
-    result = await db.fetch("SELECT * FROM test")
+    result = await db.fetch("SELECT * FROM users")
     for i in result:
         print(*i)
-    #await db.execute(f"INSERT INTO users2 (name, dob) VALUES ('Albert','1999-05-06');" )
+    await db.execute(f"INSERT INTO users (name, dob) VALUES ('Albert','1999-05-06');" )
     await db.disconnect()
 
+
+async def db_write():
+    db = Database(user, password, host, port, db_name)
+    await db.connect()
+    result = await db.fetch("SELECT * FROM users")
+    for i in result:
+        print(*i)
+    await db.execute(f"INSERT INTO users (name, dob) VALUES ('Albert','1999-05-06');" )
+    await db.disconnect()
+
+
+async def db_read():
+    db = Database(user, password, host, port, db_name)
+    await db.connect()
+    result = await db.fetch("SELECT * FROM users")
+    await db.disconnect()
+    return result
 
 
 if __name__ == "__main__":

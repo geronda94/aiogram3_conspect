@@ -14,7 +14,6 @@ class Request:
         self.connector = connector
 
     #функци записывает данные в бд
-    async def add_user(self, user_id, user_name):
-        query = f"INSERT INTO booking (user_id, user_name)"\
-                f"VALUES ({user_id}, '{user_name}') ON CONFLICT (user_id) DO UPDATE SET user_name='{user_name}'"
+    async def add_data(self,  user_name):
+        query = f"INSERT INTO test (name) VALUES ('ALFRED') "
         await self.connector.execute(query)

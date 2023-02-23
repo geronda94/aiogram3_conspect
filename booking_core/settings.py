@@ -43,7 +43,7 @@ def get_settings(path: str):
         db=env.str('DB_DATABASE')
     ))
 
-settings = get_settings('config.py') #Устанавливаем настройки в переменную
+settings = get_settings('.env') #Устанавливаем настройки в переменную
 
 TOKEN = settings.bots.bot_token
 ADMIN = settings.bots.admin_id
