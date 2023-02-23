@@ -1,45 +1,69 @@
-from aiogram import Bot, Dispatcher, F #импортируем бота и диспетчер
-from aiogram.types import Message, ContentType #импортируем объект Message
-from aiogram.filters import Command #Имортируем объект через который устанавливаем команды
-import asyncio #Импортируем asyncio чтобы иметь возможность запускать бота асинхронно
-import logging #импортируем библиотеку логирования
-from core.settings import TOKEN, ADMIN
-from core.handlers.basic import get_start, start_bot, stop_bot, get_photo
+import asyncio
+import logging
+from asyncio import WindowsSelectorEventLoopPolicy
+import asyncpg
+from aiogram import Bot, Dispatcher
+from aiogram.types import Message
+import asyncpg
+from booking_core.middlewares.db_middlewares import DbSession
+from booking_core.settings import TOKEN, ADMIN, DB_HOST, DB_PORT,DB_NAME, DB_USER,DB_PASSWORD
 
 
-#созздаем асинхронную функцию с запуском бота
-async def start():
-    logging.basicConfig(level=logging.INFO,#создаем конфиг логирования и прописываем формат отображения логов
-                        format="%(asctime)s - [%(levelname)s] - %(name)s -" \
-                               "(%(filename)s).%(funcName)s(%(lineno)d) - %(message)s")
-    #parse_mode = html позволяет использовать html cтили для оформления текста
-    bot = Bot(token=TOKEN, parse_mode='HTML')
+
+asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())
+############################
+#Стартвые функции
+async def start_bot( bot: Bot):
+    await bot.send_message(ADMIN, 'Бот запущен')
+
+async def stop_bot(bot: Bot):
+    await bot.send_message(ADMIN, 'Бот остановлен')
+
+async def create_pool(user, host, password, db_name, port):
+    return await asyncpg.create_pool(user=user, password=password, host=host,
+                                              port=port, database=db_name)
+
+#############################
+
+#Тело бота
+async def run_bot():
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - [%(levelname)s] - %(name)s -(%(filename)s).%(funcName)s(%(lineno)d) - %(message)s")
+
+
+    bot = Bot(TOKEN, parse_mode='HTML')
     dp = Dispatcher()
-    #Регистирируем события которые срабатывают при запуске и останвоке бота, функции мы прописали в core.handlers.basic
+
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
 
-    # регистрируем хэндлеры из core.hanlers.basic
-    dp.message.register(get_start, Command(commands=['start']))
-    dp.message.register(get_photo, F.content_type == ContentType.PHOTO)
+    pool = create_pool(user=DB_USER, host=DB_HOST, password=DB_PASSWORD, db_name=DB_NAME, port=DB_PORT)
+    dp.message.middleware(DbSession(pool))
+
+
+
+
+
+
+
+
+
+
 
 
     try:
-        # Через await запускаем асинхронную функцию
+        #Начало сессии
         await dp.start_polling(bot)
     finally:
-        #Закрываем сессию с ботом
+        #Закрываем сессию
         await bot.session.close()
 
 
 
-if __name__ == "__main__":
-    #Заупскаем Бота для асинхронной работы
-    asyncio.run(start())
+##########################
 
-
-
-
-
-
-
+#Запуск
+if __name__ == '__main__':
+    try:
+        asyncio.run(run_bot())
+    except Exception as ex:
+        print(ex)

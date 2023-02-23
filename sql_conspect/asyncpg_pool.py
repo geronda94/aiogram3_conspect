@@ -1,7 +1,9 @@
 import asyncio
 import asyncpg
 from aiohttp import web
-from config import user, password, host, port, db_name
+from config import user, password, host, port
+
+db_name = 'booking_bot'
 
 dsn = f'postgresql://{user}:{password}@{host}:{port}/{db_name}'
 
@@ -55,7 +57,7 @@ class Database:
 async def main():
     db = Database(user, password, host, port, db_name)
     await db.connect()
-    result = await db.fetch("SELECT * FROM users2")
+    result = await db.fetch("SELECT * FROM test")
     for i in result:
         print(*i)
     #await db.execute(f"INSERT INTO users2 (name, dob) VALUES ('Albert','1999-05-06');" )
