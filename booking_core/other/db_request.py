@@ -14,6 +14,11 @@ class Request:
         self.connector = connector
 
     #функци записывает данные в бд
-    async def add_data(self,  user_name):
-        query = f"INSERT INTO test (name) VALUES ('ALFRED') "
-        await self.connector.execute(query)
+    async def get_user(self,  id_user, first_name, last_name, username):
+        query = f"INSERT INTO users (id_telegram, first_name, last_name, username) " \
+                f"VALUES ('{id_user}', '{first_name}','{last_name}', '{username}') " \
+                f"ON CONFLICT (id_telegram) DO UPDATE SET username='Lui', first_name='Adolf', last_name='Cherchel';"
+        #await self.connector.fetch(query)
+
+        async with self.connector.acquire() as connection:
+            await connection.fetch(query)

@@ -18,3 +18,5 @@ async def get_data(message: Message, state: FSMContext, request: Request):
 async def get_name(message: Message, state: FSMContext, request:Request):
     await message.answer('Привет, я помощник салона красоты. Как я могу к тебе обращаться?', reply_markup=await get_button_name(message.from_user.first_name))
     await state.set_state(States.state_name)
+    await request.get_user(id_user=message.from_user.id, username=message.from_user.username,
+                           first_name=message.from_user.first_name, last_name=message.from_user.last_name)

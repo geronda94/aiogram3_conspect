@@ -31,6 +31,6 @@ class DbSession(BaseMiddleware):
                        event: TelegramObject,
                        data: Dict[str, Any]
                        ) -> Any:
-        async with self.connector.acquire() as connect:
-            data['request'] = Request(connect)
-            return await handler(event, data)
+        #async with self.connector.acquire() as connect:
+        data['request'] = Request(self.connector)
+        return await handler(event, data)

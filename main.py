@@ -7,10 +7,11 @@ from aiogram.filters import Command
 from aiogram.types import Message
 import asyncpg
 from booking_core.middlewares.db_middlewares import DbSession
+from booking_core.other.db_entry import database_entry
 from booking_core.other.state_user import States
 from booking_core.settings import TOKEN, ADMIN, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
 from booking_core.handlers.steps import get_data, get_name
-
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 ############################
 # Стартвые функции
@@ -47,6 +48,15 @@ async def run_bot():
 
     dp.message.register(get_data, States.state_name)
     dp.message.register(get_name, Command(commands='start'))
+
+
+
+    await database_entry()
+
+    sheduler = AsyncIOScheduler(timezone='Europe/Kiev')
+    sheduler.add_job(database_entry, 'cron', hour=1, minute=00, start_date='2023-02-26 20:27:00')
+    sheduler.start()
+
 
     try:
         # Начало сессии

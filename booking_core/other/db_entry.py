@@ -7,7 +7,7 @@ import datetime
 
 async def pool_connect():
     return await asyncpg.create_pool(user=DB_USER, password=DB_PASSWORD, host=DB_HOST,
-                              port=DB_PORT, database=DB_NAME)
+                                     port=DB_PORT, database=DB_NAME)
 
 
 async def get_count_row(pool: asyncpg.pool.Pool):
@@ -19,17 +19,15 @@ async def get_count_row(pool: asyncpg.pool.Pool):
 async def database_entry():
     pool = await pool_connect()
 
-    if await get_count_row(pool) <1:
+    if await get_count_row(pool) < 1:
         query = await get_query(3, str(DT.today().date()))
     else:
         query = await get_query(1, str(DT.today().date()))
 
     async with pool.acquire() as connection:
-        ret = await connection.fetch(query)
-
-
-
-    #await conn.close()
+        await connection.fetch(query)
+        #ret = await connection.fetch('SELECT * FROM booking;')
+        #await conn.close()
 
 
 async def get_query(count_days, target_day):
@@ -40,10 +38,9 @@ async def get_query(count_days, target_day):
     for x in range(count_days):
         date_target = target + datetime.timedelta(days=x)
 
-        for i in range(0, 10*60, 60):
+        for i in range(0, 10 * 60, 60):
             time_delta = (datetime.datetime.combine(date.today(), datetime.time(8, 0)) + timedelta(minutes=i)).strftime(
                 "%H:%M")
-
 
             full_datetime = f"'{date_target} {time_delta}'"
             line = f"\r\n('{date_target}', '{time_delta}', 'free',  {full_datetime}),"
@@ -52,8 +49,6 @@ async def get_query(count_days, target_day):
 
     query = f'{query.rstrip(query[-1])};'
     return query
-
-
 
 
 asyncio.run(database_entry())
