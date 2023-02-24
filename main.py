@@ -53,9 +53,9 @@ async def run_bot():
 
     await database_entry()
 
-    sheduler = AsyncIOScheduler(timezone='Europe/Kiev')
-    sheduler.add_job(database_entry, 'cron', hour=1, minute=00, start_date='2023-02-26 20:27:00')
-    sheduler.start()
+    scheduler = AsyncIOScheduler(timezone='Europe/Kiev')
+    scheduler.add_job(database_entry, 'cron', hour=1, minute=00, start_date='2023-02-26 20:27:00')
+    scheduler.start()
 
 
     try:
