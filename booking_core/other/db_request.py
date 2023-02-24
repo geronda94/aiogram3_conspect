@@ -19,7 +19,7 @@ class Request:
                 f"VALUES ('{id_user}', '{first_name}','{last_name}', '{username}') " \
                 f"ON CONFLICT (id_telegram) DO UPDATE SET username='{username}', first_name='{first_name}', " \
                 f"last_name='{last_name}';"
-        await self.connector.fetch(query)
 
-        # async with self.connector.acquire() as connection:
-        #     await connection.fetch(query)
+        async with self.connector.acquire() as connection:
+            await connection.fetch(query)
+        # await self.connector.fetch(query)
