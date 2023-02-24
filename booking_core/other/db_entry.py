@@ -20,16 +20,19 @@ async def database_entry():
     conn = await pool_connect()
 
     if await get_count_row(conn) <1:
-        pass
+        query = await get_query(3,str(DT.today().date()))
     else:
-        pass
+        query = await get_query(1, str(DT.today().date()))
 
-    await conn.close()
+    async with conn.acquire() as connection:
+        await connection.fetch(query)
+
+
+    #await conn.close()
 
 
 async def get_query(count_days, target_day):
     query = f"INSERT INTO booking(b_date, b_time, b_statuse, b_datetime)"
-
 
     target = DT.strptime(str(target_day), "%Y-%m-%d").date() + timedelta(days=1)
 
@@ -41,22 +44,18 @@ async def get_query(count_days, target_day):
                 "%H:%M")
 
 
-            print('timedelta ', time_delta)
             full_datetime = f"{date_target} {time_delta}"
-            print('fuldatetime ', full_datetime)
             line = f"\r\n('{date_target}', '{time_delta}', 'free',  {full_datetime}),"
-            print('line ', line)
 
             query += line
 
     query = f'{query.rstrip(query[-1])};'
-    print('query ', query)
     return query
 
 
 async def runi():
     await database_entry()
-    print(await get_query(5, DT.today().date()))
+
 
 
 asyncio.run(runi())
