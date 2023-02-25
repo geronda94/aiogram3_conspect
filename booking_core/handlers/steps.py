@@ -6,6 +6,7 @@ from booking_core.other.db_request import Request
 from booking_core.other.state_user import States
 
 
+
 async def get_time(call: CallbackQuery, state: FSMContext, request: Request):
     data_needed = call.data.split('=')[1]
     await call.message.edit_text(f'Выбранная дата <b>{data_needed}</b>,\r\n'

@@ -6,6 +6,7 @@ from booking_core.other.db_request import Request
 
 
 
+
 class DbSession(BaseMiddleware):
     def __init__(self, connector: asyncpg.pool.Pool):
         super().__init__()

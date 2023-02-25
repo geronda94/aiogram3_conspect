@@ -8,6 +8,7 @@ async def kb_get_time(request: Request, data_needed):
 
     buttons: List = []
 
+
     for el_time in lst_date:
         if len(time_list) == 3:
             buttons.append(time_list)

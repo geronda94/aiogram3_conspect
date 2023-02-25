@@ -49,3 +49,4 @@ class Request:
             await connection.execute(query)
         # await self.connector.fetch(query)
 
+

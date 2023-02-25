@@ -33,6 +33,7 @@ async def database_entry():
 async def get_query(count_days, target_day):
     query = f"INSERT INTO booking(b_date, b_time, b_statuse, b_datetime) VALUES"
 
+
     target = DT.strptime(target_day, "%Y-%m-%d").date() + timedelta(days=1)
 
     for x in range(count_days):

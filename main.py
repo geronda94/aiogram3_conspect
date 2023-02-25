@@ -40,6 +40,7 @@ async def run_bot():
     bot = Bot(TOKEN, parse_mode='HTML')
     dp = Dispatcher()
 
+
     dp.startup.register(start_bot)
     dp.shutdown.register(stop_bot)
 
