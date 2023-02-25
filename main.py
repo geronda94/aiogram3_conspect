@@ -10,7 +10,7 @@ from booking_core.middlewares.db_middlewares import DbSession
 from booking_core.other.db_entry import database_entry
 from booking_core.other.state_user import States
 from booking_core.settings import TOKEN, ADMIN, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
-from booking_core.handlers.steps import get_data, get_name
+from booking_core.handlers.steps import get_data, get_name, get_time
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 ############################
@@ -45,7 +45,9 @@ async def run_bot():
 
     pool = await create_pool(user=DB_USER, host=DB_HOST, password=DB_PASSWORD, db_name=DB_NAME, port=DB_PORT)
     dp.message.middleware(DbSession(pool))
+    dp.callback_query.middleware(DbSession(pool))
 
+    dp.callback_query.register(get_time, States.state_date)
     dp.message.register(get_data, States.state_name)
     dp.message.register(get_name, Command(commands='start'))
 
