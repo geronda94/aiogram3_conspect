@@ -1,9 +1,24 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
+
+from booking_core.keyboards.service_button import kb_get_services
 from booking_core.keyboards.text_button import get_button_name
 from booking_core.keyboards.user_buttons import kb_get_date, kb_get_time
 from booking_core.other.db_request import Request
 from booking_core.other.state_user import States
+
+
+
+async def get_service(call: CallbackQuery, state: FSMContext, request: Request):
+    data = await state.get_data()
+    date_needed = data['date']
+    time_needed = call.data.split('=')[1]
+    await state.update_data(time=time_needed)
+    await state.set_state(States.state_service)
+    await call.message.edit_text(f"Выбранная дата <b>{date_needed}</b> \r\nВыбранное время: <b>{time_needed}</b>"
+                                 f"\r\nТеперь выберите стрижку:",
+                                 reply_markup= await kb_get_services())
+    
 
 
 

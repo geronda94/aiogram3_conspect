@@ -23,7 +23,6 @@ class Request:
         return lst_time
 
 
-
     #Функция извлекает даты из БД
     async def db_get_date(self):
         date_now = datetime.datetime.today().strftime("%d.%m.%Y %H:%M:%S")
@@ -50,3 +49,8 @@ class Request:
         # await self.connector.fetch(query)
 
 
+    async def db_change_statuse(self, statuse, date, time):
+        query = f"UPDATE booking SET b_statuse='{statuse}' WHERE b_date='{date}' AND b_time='{time}';"
+
+        async with self.connector.acquire() as connection:
+            await connection.execute(query)
