@@ -1,5 +1,4 @@
 from typing import List
-
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 
@@ -24,8 +23,25 @@ async def kb_get_services():
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
+async def kb_get_add_services():
+    dict_services = {'Маникюр':10, 'Педикюр':15, 'Реснички':30}
 
+    time_list: List[InlineKeyboardButton] = []
+    buttons: List = []
 
+    for k, v in dict_services.items():
+        if len(time_list) == 3:
+            buttons.append(time_list)
+            time_list = []
+
+        button = InlineKeyboardButton(text=f'{k}--{v}$', callback_data=f"services={k}|{v}")
+        time_list.append(button)
+
+    buttons.append(time_list)
+    button_cancel = InlineKeyboardButton(text=f'Спасибо не надо', callback_data=f'add_service_cancel')
+    buttons.append([button_cancel])
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
 
